@@ -9,7 +9,7 @@ const pdfjs = await import('./pdfjs-dist/build/pdf.mjs');
 
 import { containsTable, findTableByText, universalTableExtract } from './pdf_extractor.js';
 
-pdfjs.GlobalWorkerOptions.workerSrc = 'http://localhost:8080/pdfjs-dist/build/pdf.worker.mjs';
+pdfjs.GlobalWorkerOptions.workerSrc = './pdfjs-dist/build/pdf.worker.mjs';
 
 const $ = (sel) => document.querySelector(sel);
 const pdfInput = $('#pdfInput');
