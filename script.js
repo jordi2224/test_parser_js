@@ -7,7 +7,7 @@ const config = await response.json();
 
 const pdfjs = await import('/pdfjs-dist/build/pdf.mjs');
 
-import { containsTable, findTableByText, universalTableExtract } from '/pdf_extractor.js';
+import { containsTable, findTableByText, universalTableExtract } from './pdf_extractor.js';
 
 pdfjs.GlobalWorkerOptions.workerSrc = 'http://localhost:8080/pdfjs-dist/build/pdf.worker.mjs';
 
