@@ -5,7 +5,7 @@ if (!response.ok) {
 }
 const config = await response.json();
 
-const pdfjs = await import('/pdfjs-dist/build/pdf.mjs');
+const pdfjs = await import('./pdfjs-dist/build/pdf.mjs');
 
 import { containsTable, findTableByText, universalTableExtract } from './pdf_extractor.js';
 
