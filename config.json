@@ -1,0 +1,58 @@
+{
+    "WISC": {
+        "WISCTables": [
+            {
+                "Title": "Subtest Score Summary",
+                "totalNumberOfColumns": 7,
+                "ScoreColumns": [
+                    "Total Raw Score",
+                    "Scaled Score",
+                    "Percentile Rank",
+                    "Age Equivalent",
+                    "SEM"
+                ],
+                "Subtests": [
+                    "Similarities",
+                    "Vocabulary",
+                    "Information",
+                    "Comprehension",
+                    "Block Design",
+                    "Visual Puzzles",
+                    "Matrix Reasoning",
+                    "Figure Weights",
+                    "Picture Concepts",
+                    "Arithmetic",
+                    "Digit Span",
+                    "Picture Span",
+                    "Letter-Number Seq.",
+                    "Coding",
+                    "Symbol Search",
+                    "Cancellation"
+                ]
+            },
+            {
+                "Title": "Composite Score Summary",
+                "totalNumberOfColumns": 8,
+                "ScoreColumns": [
+                    "Sum of Scaled Scores",
+                    "Composite Score",
+                    "Percentile Rank",
+                    "95% Confidence Interval",
+                    "Qualitative Description",
+                    "SEM"
+                ],
+                "Subtests": [
+                    "Verbal Comprehension",
+                    "Visual Spatial",
+                    "Fluid Reasoning",
+                    "Working Memory",
+                    "Processing Speed",
+                    "Full Scale IQ"
+                ]
+            }
+        ]
+    },
+    "tableExtraction": {
+        "rowTolerance": 5
+    }
+}
