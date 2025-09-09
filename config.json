@@ -1,9 +1,14 @@
 {
     "WISC": {
+        "TestName": "WISC",
         "WISCTables": [
             {
                 "Title": "Subtest Score Summary",
                 "totalNumberOfColumns": 7,
+                "PreScoreColumns": [
+                    "Subtest",
+                    "Abbreviation"
+                ],
                 "ScoreColumns": [
                     "Total Raw Score",
                     "Scaled Score",
@@ -28,11 +33,16 @@
                     "Coding",
                     "Symbol Search",
                     "Cancellation"
-                ]
+                ],
+                "OvercollumnPolicy": "dropFirst"
             },
             {
                 "Title": "Composite Score Summary",
                 "totalNumberOfColumns": 8,
+                "PreScoreColumns":[
+                    "Composite",
+                    "Abbreviation"
+                ],
                 "ScoreColumns": [
                     "Sum of Scaled Scores",
                     "Composite Score",
@@ -49,6 +59,91 @@
                     "Processing Speed",
                     "Full Scale IQ"
                 ]
+            },
+            {
+                "Title" : "ANCILLARY & COMPLEMENTARY SUMMARY",
+                "totalNumberOfColumns": 8,
+                "PreScoreColumns": [
+                    "Ancillary",
+                    "Abbreviation"
+                ],
+                "ScoreColumns": [
+                    "Sum of Scaled Scores",
+                    "Index Score",
+                    "Percentile Rank",
+                    "95% Confidence Interval",
+                    "Qualitative Description",
+                    "SEM"
+                ],
+                "Subtests": [
+                    "Quantitative Reasoning",
+                    "Auditory Working Memory",
+                    "Nonverbal",
+                    "General Ability",
+                    "Cognitive Proficiency",
+                    "Naming Speed",
+                    "Symbol Translation",
+                    "Storage & Retrieval"
+                ]
+            },
+            {
+             "Title": "Index Level Strengths and Weaknesses",
+                "totalNumberOfColumns": 7,
+                "PreScoreColumns": [
+                    "Index"
+                ],
+                "ScoreColumns": [
+                    "Score",
+                    "Comparison Score",
+                    "Difference",
+                    "Critical Value",
+                    "Strength/Weakness",
+                    "Base Rate"
+                ],
+                "Subtests": [
+                    "VCI",
+                    "VSI",
+                    "FRI",
+                    "WMI",
+                    "PSI"
+                ],
+                "OvercollumnPolicy": "dropFirst",
+                "UndercollumnPolicy": {
+                    "policy" : "addEmpty",
+                    "position": -2
+                }
+            },
+            {
+                "Title": "Subtest Level Strengths and Weaknesses",
+                "totalNumberOfColumns": 7,
+                "PreScoreColumns": [
+                    "Subtest"
+                ],
+                "ScoreColumns": [
+                    "Score",
+                    "Comparison Score",
+                    "Difference",
+                    "Critical Value",
+                    "Strength/Weakness",
+                    "Base Rate"
+                ],
+                "Subtests": [
+                    "SI",
+                    "VC",
+                    "BD",
+                    "VP",
+                    "MR",
+                    "FW",
+                    "DS",
+                    "PS",
+                    "CD",
+                    "SS"
+                ],
+                "OvercollumnPolicy": "dropFirst",
+                "UndercollumnPolicy": {
+                    "policy" : "addEmpty",
+                    "position": -2
+                }
             }
         ]
     },

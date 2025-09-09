@@ -7,7 +7,7 @@ const config = await response.json();
 
 const pdfjs = await import('./pdfjs-dist/build/pdf.mjs');
 
-import { containsTable, findTableByText, universalTableExtract } from './pdf_extractor.js';
+import { containsTable, findTableByText, universalTableExtract, getTestMetadata } from './pdf_extractor.js';
 
 pdfjs.GlobalWorkerOptions.workerSrc = './pdfjs-dist/build/pdf.worker.mjs';
 
@@ -15,21 +15,29 @@ const $ = (sel) => document.querySelector(sel);
 const pdfInput = $('#pdfInput');
 const parseBtn = $('#parseBtn');
 const downloadBtn = $('#downloadBtn');
+const errorText = $('#errorText');
+const successText = $('#successText');
+const testInfoTable = $('#testInfoTable');
+const testType = $('#testType');
+const patientName = $('#patientName');
+const testDate = $('#testDate');
 const scaleInput = $('#scale');
 const pagesInput = $('#pages');
 const rowTolInput = $('#rowTol');
 const mergeGapInput = $('#mergeGap');
 
 const pdfFrame = $('#pdfFrame');
+const viewerContainer = $('#viewerContainer');
 const tableWrap = $('#tableWrap');
 const meta = $('#meta');
+const placeholderMessage = $('#placeholderMessage');
 
 let lastRows = [];
 let pdfDoc = null;
 let currentPage = 1;
 let numPages = 0;
 
-
+let output_wb = null;
 
 // Listener for PDF file input
 pdfInput.addEventListener('change', async (event) => {
@@ -38,11 +46,48 @@ pdfInput.addEventListener('change', async (event) => {
     alert('Please select a PDF file.');
     return;
   }
+  
+  // Hide placeholder and show PDF viewer
+  placeholderMessage.style.display = 'none';
+  
+  // Create a blob URL for the selected PDF
+  const pdfUrl = URL.createObjectURL(file);
+  
+  // Load the PDF into the iframe viewer
+  const pdfFrame = $('#pdfFrame');
+  pdfFrame.src = `./pdfjs-dist/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`;
+  pdfFrame.style.display = 'block'; // Show the iframe
+  
+  // Show the PDF viewer now that a file has been loaded
+  viewerContainer.style.display = 'block';
+  
   const arrayBuffer = await file.arrayBuffer();
   pdfDoc = await pdfjs.getDocument({ data: arrayBuffer }).promise;
   console.log('PDF loaded:', pdfDoc);
 
-  const output_wb = XLSX.utils.book_new();
+  const testMetadata = await getTestMetadata(pdfDoc);
+  
+  if (testMetadata.testType && testMetadata.patientName && testMetadata.testDate ) {
+    console.log('Test Metadata:', testMetadata);
+    testType.textContent = testMetadata.testType.TestName || 'Unknown Test';
+    patientName.textContent = testMetadata.patientName || 'Unknown Name';
+    testDate.textContent = testMetadata.testDate || 'Unknown Date';
+
+    // Show the test info table and hide error text
+    testInfoTable.style.display = 'table';
+    errorText.style.display = 'none';
+    
+  } else {
+    // Hide the test info table and show error text
+    testInfoTable.style.display = 'none';
+    errorText.style.display = 'block';
+    successText.style.display = 'none';
+    // Change the download button back to ghost and disable it
+    downloadBtn.className = 'ghost';
+    downloadBtn.disabled = true;
+  }
+
+  output_wb = XLSX.utils.book_new();
   // For every table to search
     for (const test of config.WISC.WISCTables) {
         const tableText = test.Title;
@@ -51,10 +96,15 @@ pdfInput.addEventListener('change', async (event) => {
         if (page) {
             console.log(`Found "${tableText}" on page ${page.pageNumber}`);
         } else {
-            console.alert(`"${tableText}" not found in document.`);
+            console.error(`"${tableText}" not found in document.`);
         }
 
         let table = await universalTableExtract(page, test);
+
+        if (!table || table.length === 0) {
+            console.warn(`No table extracted for "${tableText}"`);
+            continue;
+        }
         // Convert the table to an array of arrays for XLSX
         let tableArray = [];
         // Add header row
@@ -65,23 +115,25 @@ pdfInput.addEventListener('change', async (event) => {
         });
         const ws = XLSX.utils.aoa_to_sheet(tableArray);
         XLSX.utils.book_append_sheet(output_wb, ws, test.Title.substring(0, 30) ); // Sheet names max 31 chars
+    }
 
+    // TODO error check, for now we assume this worked
+    // Enable the download button
+    downloadBtn.disabled = false;
+    // Change the class to primary
+    downloadBtn.className = 'primary';
+    successText.style.display = 'block';
+    return;
+
+});
+
+downloadBtn.addEventListener('click', async () => {
+
+    if (!pdfDoc) {
+    alert('Please select a PDF file first.');
+    return;
     }
 
     XLSX.writeFile(output_wb, "extracted_tables.xlsx");
-    /*
-    // Test for xlsx export
-    const wb = XLSX.utils.book_new();
-    let row = [
-        { v: "Courier: 24", t: "s", s: { font: { name: "Courier", sz: 24 } } },
-        { v: "bold & color", t: "s", s: { font: { bold: true, color: { rgb: "FF0000" } } } },
-        { v: "fill: color", t: "s", s: { fill: { fgColor: { rgb: "E9E9E9" } } } },
-        { v: "line\nbreak", t: "s", s: { alignment: { wrapText: true } } },
-    ];
-    const ws = XLSX.utils.aoa_to_sheet([row]);
-    // Ensure the worksheet name is unique by appending a timestamp
-    const sheetName = `Test_${Date.now()}`;
-    XLSX.utils.book_append_sheet(wb, ws, sheetName);
-    XLSX.writeFile(wb, "test.xlsx");
-    */
+    return;
 });

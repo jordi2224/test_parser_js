@@ -37,7 +37,12 @@
 <body>
   <header>
     <h1>PDF → Excel (100% Client‑Side) <span class="badge">Prototype</span></h1>
-    <div class="muted">Uploads never leave your browser. Parsing uses PDF.js; export uses SheetJS.</div>
+    <div class="muted">Uploads never leave your computer, ever. Supports WISC-V and WIAT-III.
+      <br>For any questions, feedback, or feature requests, checkout the repository on 
+        <a href="https://www.github.com/jordi2224/test_parser_js" style="color: var(--accent); text-decoration: none;" target="_blank" rel="noopener">GitHub</a>.
+        <br>Created by <a href="mailto:jorgehuetes@gmail.com" style="color: var(--accent); text-decoration: none;">Jorge Huete</a>.
+    </div>
+
   </header>
 
   <div class="wrap">
@@ -48,18 +53,49 @@
           <input id="pdfInput" type="file" accept="application/pdf" />
         </div>
         <div class="row">
-          <button id="parseBtn" class="primary">Parse PDF</button>
           <button id="downloadBtn" class="ghost" disabled>Download Excel</button>
         </div>
-        <div class="hint">Tip: start with defaults, inspect the preview, then tweak tolerances to match your document style.</div>
+        
+        <div id="successText" style="margin-top: 12px; color: #4ade80; font-size: 14px; display: none;">
+          PDF parsed successfully! You can now download the Excel file.
+        </div>
+
+        <div id="errorText" style="margin-top: 12px; color: #ff6b6b; font-size: 14px; display: none;">
+          Failed to extract test data from PDF
+          <p class="hint">• Ensure the PDF is a valid test report.<br>• Try another PDF if the issue persists.</p>
+        </div>
+        
+        <table id="testInfoTable" style="margin-top: 12px; display: none;">
+          <tr>
+            <th style="text-align: left;">Test Type</th>
+            <td id="testType">-</td>
+          </tr>
+          <tr>
+            <th style="text-align: left;">Patient Name</th>
+            <td id="patientName">-</td>
+          </tr>
+          <tr>
+            <th style="text-align: left;">Test Date</th>
+            <td id="testDate">-</td>
+          </tr>
+        </table>
+        
         <div class="spacer"></div>
 
       </div>
     </section>
 
     <section id="preview">
+      <div class="card" id="placeholderMessage" style="text-align: center; padding: 60px 20px; border: 2px dashed #2a3a64;">
+        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;">📄</div>
+        <h3 style="margin: 0 0 8px 0; color: var(--muted);">No PDF Selected</h3>
+        <p style="margin: 0; color: var(--muted); font-size: 14px;">Upload a PDF file to begin parsing test data</p>
+      </div>
       <div class="card" id="canvasWrap">
-        <iframe id="pdfFrame" src="./pdfjs-dist/web/viewer.html" style="width: 100%; height: 500px; border: none;"></iframe>
+        <iframe id="pdfFrame" src="./pdfjs-dist/web/viewer.html" style="width: 100%; height: 500px; border: none; display: none;"></iframe>
+      </div>
+      <div id="viewerContainer" tabindex="0" style="display: none;">
+        <div id="viewer" class="pdfViewer"></div>
       </div>
     </section>
   </div>
