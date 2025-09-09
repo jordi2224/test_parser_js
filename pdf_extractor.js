@@ -220,6 +220,7 @@ export async function universalTableExtract(page, test) {
             }
             console.warn(`Row has ${r.length} elements, expected ${columnCount}, applying UndercollumnPolicy: ${test.UndercollumnPolicy.policy}`);
             if (test.UndercollumnPolicy.policy === 'addEmpty') {
+                const position = test.UndercollumnPolicy.position;
                 console.log('UndercollumnPolicy position:', position);
                 // if position is positive, insert empties at that index, push the rest to the right
                 if (position >= 0) {
