@@ -145,7 +145,33 @@
                     "position": -2
                 }
             }
-        ]
+        ],
+        "TableSections": {
+            "Verbal Comprehension" : [
+                "Similarities",
+                "Vocabulary",
+                "Information",
+                "Comprehension"
+            ],
+            "Visual Spatial" : [
+                "Block Design",
+                "Visual Puzzles"
+            ],
+            "Fluid Reasoning" : [
+                "Matrix Reasoning",
+                "Figure Weights",
+                "Arithmetic"
+            ],
+            "Working Memory" : [
+                "Digit Span",
+                "Picture Span",
+                "Letter-Number Seq."
+            ],
+            "Processing Speed" : [
+                "Coding",
+                "Symbol Search"           
+            ]
+        }
     },
     "tableExtraction": {
         "rowTolerance": 5

@@ -8,6 +8,7 @@ const config = await response.json();
 const pdfjs = await import('./pdfjs-dist/build/pdf.mjs');
 
 import { containsTable, findTableByText, universalTableExtract, getTestMetadata } from './pdf_extractor.js';
+import { wiscTableConstructor } from './table_constructor.js';
 
 pdfjs.GlobalWorkerOptions.workerSrc = './pdfjs-dist/build/pdf.worker.mjs';
 
@@ -46,6 +47,13 @@ pdfInput.addEventListener('change', async (event) => {
     alert('Please select a PDF file.');
     return;
   }
+
+  output_wb = null; // Reset output workbook
+  testInfoTable.style.display = 'none';
+  errorText.style.display = 'none';
+  successText.style.display = 'none';
+  downloadBtn.className = 'ghost';
+  downloadBtn.disabled = true;
   
   // Hide placeholder and show PDF viewer
   placeholderMessage.style.display = 'none';
@@ -87,7 +95,7 @@ pdfInput.addEventListener('change', async (event) => {
     downloadBtn.disabled = true;
   }
 
-  output_wb = XLSX.utils.book_new();
+  let testResults = {};
   // For every table to search
     for (const test of config.WISC.WISCTables) {
         const tableText = test.Title;
@@ -105,6 +113,9 @@ pdfInput.addEventListener('change', async (event) => {
             console.warn(`No table extracted for "${tableText}"`);
             continue;
         }
+
+        testResults[tableText] = table;
+
         // Convert the table to an array of arrays for XLSX
         let tableArray = [];
         // Add header row
@@ -112,9 +123,20 @@ pdfInput.addEventListener('change', async (event) => {
         // Add data rows
         table.forEach(row => {
             tableArray.push(Object.values(row));
-        });
-        const ws = XLSX.utils.aoa_to_sheet(tableArray);
-        XLSX.utils.book_append_sheet(output_wb, ws, test.Title.substring(0, 30) ); // Sheet names max 31 chars
+        }); // Sheet names max 31 chars
+    }
+
+    // Construct final structure and validate
+    if (testMetadata.testType && testMetadata.testType.TestName === 'WISC') {
+        try {
+            output_wb = wiscTableConstructor(testResults);
+        } catch (e) {
+            console.error('Error in table construction:', e);
+            errorText.textContent = `Error in table construction: ${e.message}`;
+            errorText.style.display = 'block';
+            successText.style.display = 'none';
+            return;
+        }
     }
 
     // TODO error check, for now we assume this worked
